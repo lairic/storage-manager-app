@@ -8,6 +8,8 @@ import { Header } from "@/components/layout/Header";
 import { RevenueCard } from "@/components/dashboard/RevenueCard";
 import { RevenueMTDCard } from "@/components/dashboard/RevenueMTDCard";
 import { RollupCard, FacilityBreakdown } from "@/components/dashboard/RollupCard";
+import { MoveInsCard, MoveOutsCard, ReservationsCard } from "@/components/dashboard/ActivityList";
+import { OccupancyCard } from "@/components/dashboard/OccupancyCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getCompanies } from "@/lib/store";
 import { todayISO } from "@/lib/utils";
@@ -127,16 +129,25 @@ export default function DashboardPage() {
 
         {data && (
           <>
-            {/* Revenue */}
             {!isMultiFacility ? (
-              <div className="grid grid-cols-2 gap-3">
-                <RevenueCard data={data.facilities[0]?.revenue} />
-                <RevenueMTDCard
-                  dataMTD={data.facilities[0]?.revenueMTD}
-                  dataMTDPrevMonth={data.facilities[0]?.revenueMTDPrevMonth}
-                />
-              </div>
+              /* ── Single facility: full detail cards ── */
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  <RevenueCard data={data.facilities[0]?.revenue} />
+                  <RevenueMTDCard
+                    dataMTD={data.facilities[0]?.revenueMTD}
+                    dataMTDPrevMonth={data.facilities[0]?.revenueMTDPrevMonth}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <MoveInsCard data={data.facilities[0]?.moveIns} />
+                  <MoveOutsCard data={data.facilities[0]?.moveOuts} />
+                </div>
+                <ReservationsCard data={data.facilities[0]?.reservations} />
+                <OccupancyCard data={data.facilities[0]?.occupancy} />
+              </>
             ) : (
+              /* ── Multi-facility: rollup cards with drill-down ── */
               <>
                 <RollupCard
                   metric="revenue"
@@ -157,89 +168,68 @@ export default function DashboardPage() {
                     colorClass="text-green-400"
                   />
                 )}
-              </>
-            )}
 
-            {/* Move-ins / Move-outs */}
-            <div className="grid grid-cols-2 gap-3">
-              <RollupCard
-                metric="move-ins"
-                total={summary?.totalMoveIns ?? 0}
-                facilities={data.facilities}
-                icon={<LogIn size={18} className="text-blue-400" />}
-                label="Move-Ins"
-                colorClass="text-blue-400"
-                bgClass="bg-blue-900/40"
-                onClick={() => toggleCard("move-ins")}
-              />
-              <RollupCard
-                metric="move-outs"
-                total={summary?.totalMoveOuts ?? 0}
-                facilities={data.facilities}
-                icon={<LogOut size={18} className="text-orange-400" />}
-                label="Move-Outs"
-                colorClass="text-orange-400"
-                bgClass="bg-orange-900/40"
-                onClick={() => toggleCard("move-outs")}
-              />
-            </div>
-            {expanded === "move-ins" && isMultiFacility && (
-              <FacilityBreakdown
-                metric="move-ins"
-                facilities={data.facilities}
-                colorClass="text-blue-400"
-              />
-            )}
-            {expanded === "move-outs" && isMultiFacility && (
-              <FacilityBreakdown
-                metric="move-outs"
-                facilities={data.facilities}
-                colorClass="text-orange-400"
-              />
-            )}
-
-            {/* Reservations */}
-            <RollupCard
-              metric="reservations"
-              total={summary?.totalReservations ?? 0}
-              facilities={data.facilities}
-              icon={<Calendar size={18} className="text-purple-400" />}
-              label="Active Reservations"
-              colorClass="text-purple-400"
-              bgClass="bg-purple-900/40"
-              onClick={() => toggleCard("reservations")}
-            />
-            {expanded === "reservations" && isMultiFacility && (
-              <FacilityBreakdown
-                metric="reservations"
-                facilities={data.facilities}
-                colorClass="text-purple-400"
-              />
-            )}
-
-            {/* Facility cards (multi-facility: navigate to each) */}
-            {isMultiFacility && (
-              <div className="pt-2">
-                <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                  Facilities
-                </p>
-                <div className="space-y-2">
-                  {data.facilities.map((f) => (
-                    <button
-                      key={`${f.companyCode}/${f.facilityCode}`}
-                      onClick={() =>
-                        router.push(`/facility/${f.companyCode}/${f.facilityCode}`)
-                      }
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-left"
-                    >
-                      <p className="text-sm font-medium text-slate-200">
-                        {f.facilityName}
-                      </p>
-                      <span className="text-xs text-slate-500">View detail →</span>
-                    </button>
-                  ))}
+                <div className="grid grid-cols-2 gap-3">
+                  <RollupCard
+                    metric="move-ins"
+                    total={summary?.totalMoveIns ?? 0}
+                    facilities={data.facilities}
+                    icon={<LogIn size={18} className="text-blue-400" />}
+                    label="Move-Ins"
+                    colorClass="text-blue-400"
+                    bgClass="bg-blue-900/40"
+                    onClick={() => toggleCard("move-ins")}
+                  />
+                  <RollupCard
+                    metric="move-outs"
+                    total={summary?.totalMoveOuts ?? 0}
+                    facilities={data.facilities}
+                    icon={<LogOut size={18} className="text-orange-400" />}
+                    label="Move-Outs"
+                    colorClass="text-orange-400"
+                    bgClass="bg-orange-900/40"
+                    onClick={() => toggleCard("move-outs")}
+                  />
                 </div>
-              </div>
+                {expanded === "move-ins" && (
+                  <FacilityBreakdown metric="move-ins" facilities={data.facilities} colorClass="text-blue-400" />
+                )}
+                {expanded === "move-outs" && (
+                  <FacilityBreakdown metric="move-outs" facilities={data.facilities} colorClass="text-orange-400" />
+                )}
+
+                <RollupCard
+                  metric="reservations"
+                  total={summary?.totalReservations ?? 0}
+                  facilities={data.facilities}
+                  icon={<Calendar size={18} className="text-purple-400" />}
+                  label="Active Reservations"
+                  colorClass="text-purple-400"
+                  bgClass="bg-purple-900/40"
+                  onClick={() => toggleCard("reservations")}
+                />
+                {expanded === "reservations" && (
+                  <FacilityBreakdown metric="reservations" facilities={data.facilities} colorClass="text-purple-400" />
+                )}
+
+                <div className="pt-2">
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                    Facilities
+                  </p>
+                  <div className="space-y-2">
+                    {data.facilities.map((f) => (
+                      <button
+                        key={`${f.companyCode}/${f.facilityCode}`}
+                        onClick={() => router.push(`/facility/${f.companyCode}/${f.facilityCode}`)}
+                        className="w-full flex items-center justify-between px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-left"
+                      >
+                        <p className="text-sm font-medium text-slate-200">{f.facilityName}</p>
+                        <span className="text-xs text-slate-500">View detail →</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
             )}
           </>
         )}

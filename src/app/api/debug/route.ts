@@ -143,14 +143,32 @@ export async function GET(req: NextRequest) {
     results.leasesRecentlyUpdated = { status: r.status, body: r.data };
   } catch (e) { results.leasesRecentlyUpdatedError = String(e); }
 
-  // 10. Reports endpoint — check if a move-out report exists
+  // 10. Units — first page (see field names + availability statuses)
   try {
     const r = await nodeGet(
-      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/reports/move-outs?fromDate=${date}&toDate=${date}`,
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/units?Page=0&Size=3`,
       token
     );
-    results.reportsMoveOuts = { status: r.status, body: r.data };
-  } catch (e) { results.reportsMoveOutsError = String(e); }
+    results.unitsAll = { status: r.status, body: r.data };
+  } catch (e) { results.unitsAllError = String(e); }
+
+  // 11. Units — filter by AvailabilityStatus=Occupied (check if param works)
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/units?AvailabilityStatus=Occupied&Page=0&Size=1`,
+      token
+    );
+    results.unitsOccupied = { status: r.status, body: r.data };
+  } catch (e) { results.unitsOccupiedError = String(e); }
+
+  // 12. Units — filter by AvailabilityStatus=Vacant
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/units?AvailabilityStatus=Vacant&Page=0&Size=1`,
+      token
+    );
+    results.unitsVacant = { status: r.status, body: r.data };
+  } catch (e) { results.unitsVacantError = String(e); }
 
   return NextResponse.json(results);
 }
