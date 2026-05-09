@@ -92,16 +92,12 @@ export async function getJournalEntries(
   fromDate: string,
   toDate?: string
 ): Promise<JournalEntriesReport> {
-  // The spec defines this as GET with a request body, but some runtimes strip
-  // GET bodies. Send dates as query params AND body to handle both cases.
+  // Spec defines this as GET with requestBody, but Node.js fetch rejects
+  // GET bodies entirely. Query params are the only viable approach.
   const qs = new URLSearchParams({ fromDate, toDate: toDate ?? fromDate });
   return request<JournalEntriesReport>(
     `/api/v2/companies/${companyCode}/facilities/${facilityCode}/reports/journal-entries?${qs}`,
-    token,
-    {
-      method: "GET",
-      body: JSON.stringify({ fromDate, toDate: toDate ?? fromDate }),
-    }
+    token
   );
 }
 
