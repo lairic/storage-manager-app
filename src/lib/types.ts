@@ -73,22 +73,29 @@ export interface TenantSummary {
   firstName: string;
   lastName: string;
   fullName: string;
+  email?: string;
 }
 
 export interface UnitSummary {
-  unitNumber: string;
-  unitGroupName?: string;
+  id?: string;
+  number: string;
+  availabilityStatus?: string;
+  unitType?: { id?: string; name: string };
 }
 
 export interface Lease {
   id: string;
   status: LeaseStatus;
-  type: LeaseType;
+  leaseType: string;
   moveInDate: string | null;
-  moveOutDate: string | null;
+  moveOutDate?: string | null;
   tenant: TenantSummary;
   unit: UnitSummary;
-  monthlyRate: number;
+  effectiveRate: number;
+  balanceDue?: number;
+  paidThroughDate?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface PaginatedResponse<T> {
@@ -104,11 +111,17 @@ export type ReservationStatus = "Active" | "Canceled" | "Converted";
 
 export interface Reservation {
   id: string;
-  facilityId: string;
-  unit: { unitNumber: string; unitGroupName?: string };
+  facilityId?: string;
+  unit: {
+    number?: string;
+    unitNumber?: string;
+    unitGroupName?: string;
+    unitType?: { id?: string; name: string };
+  };
   reservedUntil: string;
   status: ReservationStatus;
-  leadSourceId: string;
+  leadSourceId?: string;
+  leadSource?: string;
   endUser: {
     id: string;
     firstName: string;
@@ -151,7 +164,7 @@ export interface FacilityDashboardData {
   facilityName: string;
   revenue: JournalEntriesReport;
   revenueMTD: JournalEntriesReport;
-  revenuePrevDay: JournalEntriesReport;
+  revenueMTDPrevMonth: JournalEntriesReport;
   moveIns: PaginatedResponse<Lease>;
   moveOuts: PaginatedResponse<Lease>;
   reservations: PaginatedResponse<Reservation>;
@@ -162,7 +175,7 @@ export interface RollupSummary {
   creditTotal: number;
   debitTotal: number;
   mtdCreditTotal: number;
-  prevDayCreditTotal: number;
+  prevMonthMTDCreditTotal: number;
   totalMoveIns: number;
   totalMoveOuts: number;
   totalReservations: number;

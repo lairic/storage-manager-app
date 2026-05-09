@@ -5,7 +5,7 @@ import {
   getLeases,
   getReservations,
 } from "@/lib/api-client";
-import { todayISO, firstDayOfMonth, sameDayLastMonth } from "@/lib/utils";
+import { todayISO, firstDayOfMonth, firstDayOfLastMonth, sameDayLastMonth } from "@/lib/utils";
 import type {
   FacilityDashboardData,
   RollupResponse,
@@ -26,13 +26,14 @@ async function fetchOneFacility(
   date: string
 ): Promise<FacilityDashboardData> {
   const mtdFrom = firstDayOfMonth(date);
-  const prevDay = sameDayLastMonth(date);
+  const prevMonthFrom = firstDayOfLastMonth(date);
+  const prevMonthTo = sameDayLastMonth(date);
   try {
-    const [revenue, revenueMTD, revenuePrevDay, moveIns, moveOuts, reservations] =
+    const [revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations] =
       await Promise.all([
         getJournalEntries(token, companyCode, facilityCode, date),
         getJournalEntries(token, companyCode, facilityCode, mtdFrom, date),
-        getJournalEntries(token, companyCode, facilityCode, prevDay),
+        getJournalEntries(token, companyCode, facilityCode, prevMonthFrom, prevMonthTo),
         getLeases(token, companyCode, facilityCode, {
           MoveInDateFrom: date,
           MoveInDateTo: date,
@@ -48,13 +49,13 @@ async function fetchOneFacility(
         }),
         getReservations(token, companyCode, facilityCode, 0, 25),
       ]);
-    return { companyCode, facilityCode, facilityName, revenue, revenueMTD, revenuePrevDay, moveIns, moveOuts, reservations };
+    return { companyCode, facilityCode, facilityName, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations };
   } catch (err) {
     const error = err instanceof Error ? err.message : "Unknown error";
     const empty = { debitTotal: 0, creditTotal: 0, journalEntries: [] };
     return {
       companyCode, facilityCode, facilityName, error,
-      revenue: empty, revenueMTD: empty, revenuePrevDay: empty,
+      revenue: empty, revenueMTD: empty, revenueMTDPrevMonth: empty,
       moveIns: { results: [], totalCount: 0, page: 0, size: 0 },
       moveOuts: { results: [], totalCount: 0, page: 0, size: 0 },
       reservations: { results: [], totalCount: 0, page: 0, size: 0 },
@@ -113,12 +114,12 @@ export async function POST(req: NextRequest) {
       creditTotal: acc.creditTotal + (f.revenue?.creditTotal ?? 0),
       debitTotal: acc.debitTotal + (f.revenue?.debitTotal ?? 0),
       mtdCreditTotal: acc.mtdCreditTotal + (f.revenueMTD?.creditTotal ?? 0),
-      prevDayCreditTotal: acc.prevDayCreditTotal + (f.revenuePrevDay?.creditTotal ?? 0),
+      prevMonthMTDCreditTotal: acc.prevMonthMTDCreditTotal + (f.revenueMTDPrevMonth?.creditTotal ?? 0),
       totalMoveIns: acc.totalMoveIns + (f.moveIns?.totalCount ?? 0),
       totalMoveOuts: acc.totalMoveOuts + (f.moveOuts?.totalCount ?? 0),
       totalReservations: acc.totalReservations + (f.reservations?.totalCount ?? 0),
     }),
-    { creditTotal: 0, debitTotal: 0, mtdCreditTotal: 0, prevDayCreditTotal: 0, totalMoveIns: 0, totalMoveOuts: 0, totalReservations: 0 }
+    { creditTotal: 0, debitTotal: 0, mtdCreditTotal: 0, prevMonthMTDCreditTotal: 0, totalMoveIns: 0, totalMoveOuts: 0, totalReservations: 0 }
   );
 
   const response: RollupResponse = { date, summary, facilities };

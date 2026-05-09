@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { RevenueCard } from "@/components/dashboard/RevenueCard";
+import { RevenueMTDCard } from "@/components/dashboard/RevenueMTDCard";
 import {
   MoveInsCard,
   MoveOutsCard,
@@ -122,11 +123,13 @@ export default function FacilityPage({ params }: PageProps) {
         {data && (
           <>
             {enabledCards.includes("revenue") && (
-              <RevenueCard
-                data={data.revenue}
-                dataMTD={data.revenueMTD}
-                dataPrevDay={data.revenuePrevDay}
-              />
+              <>
+                <RevenueCard data={data.revenue} />
+                <RevenueMTDCard
+                  dataMTD={data.revenueMTD}
+                  dataMTDPrevMonth={data.revenueMTDPrevMonth}
+                />
+              </>
             )}
 
             {(enabledCards.includes("move-ins") || enabledCards.includes("move-outs")) && (

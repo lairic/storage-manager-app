@@ -5,7 +5,7 @@ import {
   getLeases,
   getReservations,
 } from "@/lib/api-client";
-import { todayISO, firstDayOfMonth, sameDayLastMonth } from "@/lib/utils";
+import { todayISO, firstDayOfMonth, firstDayOfLastMonth, sameDayLastMonth } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -35,14 +35,15 @@ export async function GET(req: NextRequest) {
   }
 
   const mtdFrom = firstDayOfMonth(date);
-  const prevDay = sameDayLastMonth(date);
+  const prevMonthFrom = firstDayOfLastMonth(date);
+  const prevMonthTo = sameDayLastMonth(date);
 
   try {
-    const [revenue, revenueMTD, revenuePrevDay, moveIns, moveOuts, reservations] =
+    const [revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations] =
       await Promise.all([
         getJournalEntries(ct.token, companyCode, facilityCode, date),
         getJournalEntries(ct.token, companyCode, facilityCode, mtdFrom, date),
-        getJournalEntries(ct.token, companyCode, facilityCode, prevDay),
+        getJournalEntries(ct.token, companyCode, facilityCode, prevMonthFrom, prevMonthTo),
         getLeases(ct.token, companyCode, facilityCode, {
           MoveInDateFrom: date,
           MoveInDateTo: date,
@@ -59,7 +60,7 @@ export async function GET(req: NextRequest) {
         getReservations(ct.token, companyCode, facilityCode, 0, 25),
       ]);
 
-    return NextResponse.json({ date, companyCode, facilityCode, revenue, revenueMTD, revenuePrevDay, moveIns, moveOuts, reservations });
+    return NextResponse.json({ date, companyCode, facilityCode, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations });
   } catch (err) {
     const message = err instanceof Error ? err.message : "API error";
     return NextResponse.json({ error: message }, { status: 500 });

@@ -38,6 +38,12 @@ export function firstDayOfMonth(isoDate: string): string {
   return isoDate.slice(0, 8) + "01";
 }
 
+export function firstDayOfLastMonth(isoDate: string): string {
+  const [y, m] = isoDate.split("-").map(Number);
+  const prev = new Date(y, m - 2, 1);
+  return prev.toISOString().slice(0, 10);
+}
+
 export function sameDayLastMonth(isoDate: string): string {
   const [y, m, d] = isoDate.split("-").map(Number);
   // JS Date normalizes automatically (e.g. March 31 → Feb 28/29)

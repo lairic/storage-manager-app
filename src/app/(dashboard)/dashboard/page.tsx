@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { DollarSign, LogIn, LogOut, Calendar } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { RevenueCard } from "@/components/dashboard/RevenueCard";
+import { RevenueMTDCard } from "@/components/dashboard/RevenueMTDCard";
 import { RollupCard, FacilityBreakdown } from "@/components/dashboard/RollupCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getCompanies } from "@/lib/store";
@@ -129,10 +130,10 @@ export default function DashboardPage() {
             {/* Revenue */}
             {!isMultiFacility ? (
               <>
-                <RevenueCard
-                  data={data.facilities[0]?.revenue}
+                <RevenueCard data={data.facilities[0]?.revenue} />
+                <RevenueMTDCard
                   dataMTD={data.facilities[0]?.revenueMTD}
-                  dataPrevDay={data.facilities[0]?.revenuePrevDay}
+                  dataMTDPrevMonth={data.facilities[0]?.revenueMTDPrevMonth}
                 />
               </>
             ) : (
