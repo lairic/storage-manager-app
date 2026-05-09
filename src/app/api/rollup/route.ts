@@ -40,6 +40,7 @@ async function fetchOneFacility(
           Size: 50,
         }),
         getLeases(token, companyCode, facilityCode, {
+          Statuses: "Terminated",
           MoveOutDateFrom: date,
           MoveOutDateTo: date,
           Page: 0,

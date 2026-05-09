@@ -50,6 +50,7 @@ export async function GET(req: NextRequest) {
           Size: 50,
         }),
         getLeases(ct.token, companyCode, facilityCode, {
+          Statuses: "Terminated",
           MoveOutDateFrom: date,
           MoveOutDateTo: date,
           Page: 0,

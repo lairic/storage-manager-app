@@ -89,5 +89,23 @@ export async function GET(req: NextRequest) {
     results.leasesMoveIn = { status: r.status, body: r.data };
   } catch (e) { results.leasesMoveInError = String(e); }
 
+  // 5. Terminated leases — see field names and date fields available
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/leases?Statuses=Terminated&Page=0&Size=5`,
+      token
+    );
+    results.leasesTerminated = { status: r.status, body: r.data };
+  } catch (e) { results.leasesTerminatedError = String(e); }
+
+  // 6. Terminated leases filtered by MoveOutDateFrom (check if field exists)
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/leases?Statuses=Terminated&MoveOutDateFrom=${date}&MoveOutDateTo=${date}&Page=0&Size=10`,
+      token
+    );
+    results.leasesTerminatedToday = { status: r.status, body: r.data };
+  } catch (e) { results.leasesTerminatedTodayError = String(e); }
+
   return NextResponse.json(results);
 }

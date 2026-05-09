@@ -20,7 +20,10 @@ export function RevenueCard({ data, dataMTD, dataPrevDay }: Props) {
   const pct =
     prevDayTotal > 0 ? Math.round((delta / prevDayTotal) * 100) : null;
 
-  const entries = (data?.journalEntries ?? []).filter((e) => e.credit > 0);
+  // Payment methods are Asset accounts on the debit side (Check, Credit Card, Cash)
+  const paymentEntries = (data?.journalEntries ?? []).filter(
+    (e) => e.accountType === "Asset" && e.debit > 0
+  );
 
   return (
     <Card>
@@ -74,25 +77,25 @@ export function RevenueCard({ data, dataMTD, dataPrevDay }: Props) {
       </div>
 
       {/* Payment type breakdown */}
-      {entries.length > 0 && (
+      {paymentEntries.length > 0 && (
         <div className="space-y-1.5 pt-1 border-t border-slate-700 mt-1">
           <p className="text-xs text-slate-500 uppercase tracking-wide pt-1">
             Today&apos;s breakdown
           </p>
-          {entries.map((entry, i) => (
+          {paymentEntries.map((entry, i) => (
             <div key={i} className="flex justify-between text-sm">
               <span className="text-slate-400 truncate max-w-[65%]">
                 {entry.accountName}
               </span>
               <span className="text-slate-200 font-medium tabular-nums">
-                {formatCurrency(entry.credit)}
+                {formatCurrency(entry.debit)}
               </span>
             </div>
           ))}
         </div>
       )}
 
-      {todayTotal === 0 && entries.length === 0 && (
+      {todayTotal === 0 && paymentEntries.length === 0 && (
         <p className="text-sm text-slate-500 pt-1 border-t border-slate-700 mt-1">
           No transactions recorded yet today
         </p>
