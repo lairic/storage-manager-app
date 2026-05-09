@@ -107,5 +107,41 @@ export async function GET(req: NextRequest) {
     results.leasesTerminatedToday = { status: r.status, body: r.data };
   } catch (e) { results.leasesTerminatedTodayError = String(e); }
 
+  // 7. Try singular "Status" param (some APIs use singular)
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/leases?Status=Terminated&Page=0&Size=5`,
+      token
+    );
+    results.leasesStatusSingular = { status: r.status, body: r.data };
+  } catch (e) { results.leasesStatusSingularError = String(e); }
+
+  // 8. Try TerminationDateFrom/To (alternative param name for move-out date)
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/leases?TerminationDateFrom=${date}&TerminationDateTo=${date}&Page=0&Size=10`,
+      token
+    );
+    results.leasesTerminationDate = { status: r.status, body: r.data };
+  } catch (e) { results.leasesTerminationDateError = String(e); }
+
+  // 9. Sorted by updatedAt descending — terminated leases bubble up if updatedAt = move-out date
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/leases?SortBy=updatedAt&SortDirection=Desc&Page=0&Size=10`,
+      token
+    );
+    results.leasesRecentlyUpdated = { status: r.status, body: r.data };
+  } catch (e) { results.leasesRecentlyUpdatedError = String(e); }
+
+  // 10. Reports endpoint — check if a move-out report exists
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/reports/move-outs?fromDate=${date}&toDate=${date}`,
+      token
+    );
+    results.reportsMoveOuts = { status: r.status, body: r.data };
+  } catch (e) { results.reportsMoveOutsError = String(e); }
+
   return NextResponse.json(results);
 }
