@@ -94,6 +94,8 @@ export interface Lease {
   effectiveRate: number;
   balanceDue?: number;
   paidThroughDate?: string;
+  moveOutReason?: string;
+  notes?: string;
   createdAt?: string;
   updatedAt?: string;
 }

@@ -107,7 +107,7 @@ export async function GET(req: NextRequest) {
     results.leasesTerminatedToday = { status: r.status, body: r.data };
   } catch (e) { results.leasesTerminatedTodayError = String(e); }
 
-  // 7. Try singular "Status" param (some APIs use singular)
+  // 7. Singular "Status=Terminated" (confirmed working)
   try {
     const r = await nodeGet(
       `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/leases?Status=Terminated&Page=0&Size=5`,
@@ -115,6 +115,15 @@ export async function GET(req: NextRequest) {
     );
     results.leasesStatusSingular = { status: r.status, body: r.data };
   } catch (e) { results.leasesStatusSingularError = String(e); }
+
+  // 7b. Status=Terminated + MoveOutDateFrom/To = today (the real fix)
+  try {
+    const r = await nodeGet(
+      `${BASE_URL}/api/v2/companies/${companyCode}/facilities/${facilityCode}/leases?Status=Terminated&MoveOutDateFrom=${date}&MoveOutDateTo=${date}&Page=0&Size=10`,
+      token
+    );
+    results.leasesTerminatedMoveOutToday = { status: r.status, body: r.data };
+  } catch (e) { results.leasesTerminatedMoveOutTodayError = String(e); }
 
   // 8. Try TerminationDateFrom/To (alternative param name for move-out date)
   try {

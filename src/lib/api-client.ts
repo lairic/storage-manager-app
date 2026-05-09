@@ -162,7 +162,7 @@ export async function getLeases(
   companyCode: string,
   facilityCode: string,
   params: {
-    Statuses?: string;
+    Status?: string;
     MoveInDateFrom?: string;
     MoveInDateTo?: string;
     MoveOutDateFrom?: string;
