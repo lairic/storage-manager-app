@@ -42,14 +42,18 @@ async function fetchOneFacility(
         }),
         getLeases(token, companyCode, facilityCode, {
           Status: "Terminated",
-          MoveOutDateFrom: date,
-          MoveOutDateTo: date,
+          SortBy: "moveOutDate:desc",
           Page: 0,
-          Size: 50,
+          Size: 100,
         }),
         getReservations(token, companyCode, facilityCode, 0, 25),
       ]);
-    return { companyCode, facilityCode, facilityName, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations };
+    // API ignores MoveOutDateFrom/To — filter terminated leases client-side by date prefix
+    const todayMoveOuts = moveOuts.results.filter(
+      (l) => l.moveOutDate?.slice(0, 10) === date
+    );
+    const filteredMoveOuts = { ...moveOuts, results: todayMoveOuts, totalCount: todayMoveOuts.length };
+    return { companyCode, facilityCode, facilityName, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts: filteredMoveOuts, reservations };
   } catch (err) {
     const error = err instanceof Error ? err.message : "Unknown error";
     const empty = { debitTotal: 0, creditTotal: 0, journalEntries: [] };

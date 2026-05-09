@@ -52,15 +52,19 @@ export async function GET(req: NextRequest) {
         }),
         getLeases(ct.token, companyCode, facilityCode, {
           Status: "Terminated",
-          MoveOutDateFrom: date,
-          MoveOutDateTo: date,
+          SortBy: "moveOutDate:desc",
           Page: 0,
-          Size: 50,
+          Size: 100,
         }),
         getReservations(ct.token, companyCode, facilityCode, 0, 25),
       ]);
 
-    return NextResponse.json({ date, companyCode, facilityCode, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations });
+    // API ignores MoveOutDateFrom/To — filter terminated leases client-side by date prefix
+    const todayMoveOuts = moveOuts.results.filter(
+      (l) => l.moveOutDate?.slice(0, 10) === date
+    );
+    const filteredMoveOuts = { ...moveOuts, results: todayMoveOuts, totalCount: todayMoveOuts.length };
+    return NextResponse.json({ date, companyCode, facilityCode, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts: filteredMoveOuts, reservations });
   } catch (err) {
     const message = err instanceof Error ? err.message : "API error";
     return NextResponse.json({ error: message }, { status: 500 });
