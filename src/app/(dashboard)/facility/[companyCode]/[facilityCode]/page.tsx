@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Header } from "@/components/layout/Header";
 import { RevenueCard } from "@/components/dashboard/RevenueCard";
 import { RevenueMTDCard } from "@/components/dashboard/RevenueMTDCard";
+import { OccupancyCard } from "@/components/dashboard/OccupancyCard";
 import {
   MoveInsCard,
   MoveOutsCard,
@@ -123,13 +124,13 @@ export default function FacilityPage({ params }: PageProps) {
         {data && (
           <>
             {enabledCards.includes("revenue") && (
-              <>
+              <div className="grid grid-cols-2 gap-3">
                 <RevenueCard data={data.revenue} />
                 <RevenueMTDCard
                   dataMTD={data.revenueMTD}
                   dataMTDPrevMonth={data.revenueMTDPrevMonth}
                 />
-              </>
+              </div>
             )}
 
             {(enabledCards.includes("move-ins") || enabledCards.includes("move-outs")) && (
@@ -150,6 +151,8 @@ export default function FacilityPage({ params }: PageProps) {
             {enabledCards.includes("communications") && (
               <CommunicationsCard notes={[]} />
             )}
+
+            <OccupancyCard data={data.occupancy} />
           </>
         )}
       </main>

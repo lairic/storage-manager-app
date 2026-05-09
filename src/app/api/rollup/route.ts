@@ -4,6 +4,7 @@ import {
   getJournalEntries,
   getLeases,
   getReservations,
+  getUnitCounts,
 } from "@/lib/api-client";
 import { todayISO, firstDayOfMonth, firstDayOfLastMonth, sameDayLastMonth } from "@/lib/utils";
 import type {
@@ -29,7 +30,7 @@ async function fetchOneFacility(
   const prevMonthFrom = firstDayOfLastMonth(date);
   const prevMonthTo = sameDayLastMonth(date);
   try {
-    const [revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations] =
+    const [revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations, occupancy] =
       await Promise.all([
         getJournalEntries(token, companyCode, facilityCode, date),
         getJournalEntries(token, companyCode, facilityCode, mtdFrom, date),
@@ -47,13 +48,14 @@ async function fetchOneFacility(
           Size: 100,
         }),
         getReservations(token, companyCode, facilityCode, 0, 25),
+        getUnitCounts(token, companyCode, facilityCode).catch(() => undefined),
       ]);
     // API ignores MoveOutDateFrom/To — filter terminated leases client-side by date prefix
     const todayMoveOuts = moveOuts.results.filter(
       (l) => l.moveOutDate?.slice(0, 10) === date
     );
     const filteredMoveOuts = { ...moveOuts, results: todayMoveOuts, totalCount: todayMoveOuts.length };
-    return { companyCode, facilityCode, facilityName, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts: filteredMoveOuts, reservations };
+    return { companyCode, facilityCode, facilityName, revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts: filteredMoveOuts, reservations, occupancy };
   } catch (err) {
     const error = err instanceof Error ? err.message : "Unknown error";
     const empty = { debitTotal: 0, creditTotal: 0, journalEntries: [] };

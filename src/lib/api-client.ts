@@ -5,6 +5,7 @@ import type {
   FacilityResponse,
   JournalEntriesReport,
   Lease,
+  OccupancyData,
   PaginatedResponse,
   Reservation,
   TenantNote,
@@ -200,6 +201,23 @@ export async function getReservations(
     `/api/v2/companies/${companyCode}/facilities/${facilityCode}/reservations?${qs}`,
     token
   );
+}
+
+// ── Occupancy ─────────────────────────────────────────────────────────────────
+
+export async function getUnitCounts(
+  token: string,
+  companyCode: string,
+  facilityCode: string
+): Promise<OccupancyData> {
+  const base = `/api/v2/companies/${companyCode}/facilities/${facilityCode}/units`;
+  const [occ, vac] = await Promise.all([
+    request<PaginatedResponse<unknown>>(`${base}?AvailabilityStatus=Occupied&Page=0&Size=1`, token),
+    request<PaginatedResponse<unknown>>(`${base}?AvailabilityStatus=Vacant&Page=0&Size=1`, token),
+  ]);
+  const occupied = occ.totalCount ?? 0;
+  const vacant = vac.totalCount ?? 0;
+  return { occupied, vacant, total: occupied + vacant };
 }
 
 // ── Tenant Notes ──────────────────────────────────────────────────────────────

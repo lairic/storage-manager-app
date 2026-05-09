@@ -146,6 +146,14 @@ export interface TenantNote {
   tenantName?: string;
 }
 
+// ── Occupancy ─────────────────────────────────────────────────────────────────
+
+export interface OccupancyData {
+  occupied: number;
+  vacant: number;
+  total: number;
+}
+
 // ── API: Facilities ───────────────────────────────────────────────────────────
 
 export interface FacilityResponse {
@@ -170,6 +178,7 @@ export interface FacilityDashboardData {
   moveIns: PaginatedResponse<Lease>;
   moveOuts: PaginatedResponse<Lease>;
   reservations: PaginatedResponse<Reservation>;
+  occupancy?: OccupancyData;
   error?: string;
 }
 

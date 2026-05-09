@@ -129,13 +129,13 @@ export default function DashboardPage() {
           <>
             {/* Revenue */}
             {!isMultiFacility ? (
-              <>
+              <div className="grid grid-cols-2 gap-3">
                 <RevenueCard data={data.facilities[0]?.revenue} />
                 <RevenueMTDCard
                   dataMTD={data.facilities[0]?.revenueMTD}
                   dataMTDPrevMonth={data.facilities[0]?.revenueMTDPrevMonth}
                 />
-              </>
+              </div>
             ) : (
               <>
                 <RollupCard
