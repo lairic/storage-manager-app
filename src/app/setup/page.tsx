@@ -173,7 +173,7 @@ function SetupContent() {
               type="text"
               value={form.companyName}
               onChange={(e) => updateForm("companyName", e.target.value)}
-              placeholder="e.g. ADS Storage"
+              placeholder="What is your company name?"
               className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
@@ -189,7 +189,7 @@ function SetupContent() {
               autoCorrect="off"
               value={form.companyCode}
               onChange={(e) => updateForm("companyCode", e.target.value)}
-              placeholder="e.g. ADS"
+              placeholder="e.g. ABC"
               className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
