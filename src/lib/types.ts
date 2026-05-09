@@ -150,6 +150,8 @@ export interface FacilityDashboardData {
   facilityCode: string;
   facilityName: string;
   revenue: JournalEntriesReport;
+  revenueMTD: JournalEntriesReport;
+  revenuePrevDay: JournalEntriesReport;
   moveIns: PaginatedResponse<Lease>;
   moveOuts: PaginatedResponse<Lease>;
   reservations: PaginatedResponse<Reservation>;
@@ -159,6 +161,8 @@ export interface FacilityDashboardData {
 export interface RollupSummary {
   creditTotal: number;
   debitTotal: number;
+  mtdCreditTotal: number;
+  prevDayCreditTotal: number;
   totalMoveIns: number;
   totalMoveOuts: number;
   totalReservations: number;

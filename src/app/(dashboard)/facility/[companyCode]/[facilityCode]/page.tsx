@@ -122,7 +122,11 @@ export default function FacilityPage({ params }: PageProps) {
         {data && (
           <>
             {enabledCards.includes("revenue") && (
-              <RevenueCard data={data.revenue} />
+              <RevenueCard
+                data={data.revenue}
+                dataMTD={data.revenueMTD}
+                dataPrevDay={data.revenuePrevDay}
+              />
             )}
 
             {(enabledCards.includes("move-ins") || enabledCards.includes("move-outs")) && (

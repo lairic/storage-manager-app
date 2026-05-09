@@ -5,7 +5,7 @@ import {
   getLeases,
   getReservations,
 } from "@/lib/api-client";
-import { todayISO } from "@/lib/utils";
+import { todayISO, firstDayOfMonth, sameDayLastMonth } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
@@ -34,25 +34,31 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  try {
-    const [revenue, moveIns, moveOuts, reservations] = await Promise.all([
-      getJournalEntries(ct.token, companyCode, facilityCode, date),
-      getLeases(ct.token, companyCode, facilityCode, {
-        MoveInDateFrom: date,
-        MoveInDateTo: date,
-        Page: 0,
-        Size: 50,
-      }),
-      getLeases(ct.token, companyCode, facilityCode, {
-        MoveOutDateFrom: date,
-        MoveOutDateTo: date,
-        Page: 0,
-        Size: 50,
-      }),
-      getReservations(ct.token, companyCode, facilityCode, 0, 25),
-    ]);
+  const mtdFrom = firstDayOfMonth(date);
+  const prevDay = sameDayLastMonth(date);
 
-    return NextResponse.json({ date, companyCode, facilityCode, revenue, moveIns, moveOuts, reservations });
+  try {
+    const [revenue, revenueMTD, revenuePrevDay, moveIns, moveOuts, reservations] =
+      await Promise.all([
+        getJournalEntries(ct.token, companyCode, facilityCode, date),
+        getJournalEntries(ct.token, companyCode, facilityCode, mtdFrom, date),
+        getJournalEntries(ct.token, companyCode, facilityCode, prevDay),
+        getLeases(ct.token, companyCode, facilityCode, {
+          MoveInDateFrom: date,
+          MoveInDateTo: date,
+          Page: 0,
+          Size: 50,
+        }),
+        getLeases(ct.token, companyCode, facilityCode, {
+          MoveOutDateFrom: date,
+          MoveOutDateTo: date,
+          Page: 0,
+          Size: 50,
+        }),
+        getReservations(ct.token, companyCode, facilityCode, 0, 25),
+      ]);
+
+    return NextResponse.json({ date, companyCode, facilityCode, revenue, revenueMTD, revenuePrevDay, moveIns, moveOuts, reservations });
   } catch (err) {
     const message = err instanceof Error ? err.message : "API error";
     return NextResponse.json({ error: message }, { status: 500 });

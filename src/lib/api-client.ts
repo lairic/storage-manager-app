@@ -89,14 +89,18 @@ export async function getJournalEntries(
   token: string,
   companyCode: string,
   facilityCode: string,
-  date: string
+  fromDate: string,
+  toDate?: string
 ): Promise<JournalEntriesReport> {
+  // The spec defines this as GET with a request body, but some runtimes strip
+  // GET bodies. Send dates as query params AND body to handle both cases.
+  const qs = new URLSearchParams({ fromDate, toDate: toDate ?? fromDate });
   return request<JournalEntriesReport>(
-    `/api/v2/companies/${companyCode}/facilities/${facilityCode}/reports/journal-entries`,
+    `/api/v2/companies/${companyCode}/facilities/${facilityCode}/reports/journal-entries?${qs}`,
     token,
     {
       method: "GET",
-      body: JSON.stringify({ fromDate: date, toDate: date }),
+      body: JSON.stringify({ fromDate, toDate: toDate ?? fromDate }),
     }
   );
 }

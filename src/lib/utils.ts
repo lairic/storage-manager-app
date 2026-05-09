@@ -34,6 +34,17 @@ export function formatDateTime(isoDate: string): string {
   });
 }
 
+export function firstDayOfMonth(isoDate: string): string {
+  return isoDate.slice(0, 8) + "01";
+}
+
+export function sameDayLastMonth(isoDate: string): string {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  // JS Date normalizes automatically (e.g. March 31 → Feb 28/29)
+  const prev = new Date(y, m - 2, d);
+  return prev.toISOString().slice(0, 10);
+}
+
 export function randomUUID(): string {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();

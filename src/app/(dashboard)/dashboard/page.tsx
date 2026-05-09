@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { DollarSign, LogIn, LogOut, Calendar } from "lucide-react";
 import { Header } from "@/components/layout/Header";
+import { RevenueCard } from "@/components/dashboard/RevenueCard";
 import { RollupCard, FacilityBreakdown } from "@/components/dashboard/RollupCard";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 import { getCompanies } from "@/lib/store";
@@ -96,12 +97,6 @@ export default function DashboardPage() {
   const isMultiFacility = (data?.facilities.length ?? 0) > 1;
   const summary = data?.summary;
 
-  // Single facility: link directly to facility page
-  const singleFacilityUrl =
-    !isMultiFacility && data?.facilities[0]
-      ? `/facility/${data.facilities[0].companyCode}/${data.facilities[0].facilityCode}`
-      : null;
-
   return (
     <div className="flex flex-col min-h-dvh bg-slate-900">
       <Header
@@ -131,35 +126,37 @@ export default function DashboardPage() {
 
         {data && (
           <>
-            {/* Single-facility shortcut */}
-            {singleFacilityUrl && (
-              <button
-                onClick={() => router.push(singleFacilityUrl)}
-                className="w-full text-left rounded-2xl bg-blue-900/20 border border-blue-800 px-4 py-2.5 text-sm text-blue-300"
-              >
-                View detailed facility dashboard →
-              </button>
-            )}
-
             {/* Revenue */}
-            <RollupCard
-              metric="revenue"
-              total={summary?.creditTotal ?? 0}
-              isCurrency
-              facilities={data.facilities}
-              icon={<DollarSign size={18} className="text-green-400" />}
-              label="Revenue Today"
-              colorClass="text-green-400"
-              bgClass="bg-green-900/40"
-              onClick={() => toggleCard("revenue")}
-            />
-            {expanded === "revenue" && isMultiFacility && (
-              <FacilityBreakdown
-                metric="revenue"
-                isCurrency
-                facilities={data.facilities}
-                colorClass="text-green-400"
-              />
+            {!isMultiFacility ? (
+              <>
+                <RevenueCard
+                  data={data.facilities[0]?.revenue}
+                  dataMTD={data.facilities[0]?.revenueMTD}
+                  dataPrevDay={data.facilities[0]?.revenuePrevDay}
+                />
+              </>
+            ) : (
+              <>
+                <RollupCard
+                  metric="revenue"
+                  total={summary?.creditTotal ?? 0}
+                  isCurrency
+                  facilities={data.facilities}
+                  icon={<DollarSign size={18} className="text-green-400" />}
+                  label="Revenue Today"
+                  colorClass="text-green-400"
+                  bgClass="bg-green-900/40"
+                  onClick={() => toggleCard("revenue")}
+                />
+                {expanded === "revenue" && (
+                  <FacilityBreakdown
+                    metric="revenue"
+                    isCurrency
+                    facilities={data.facilities}
+                    colorClass="text-green-400"
+                  />
+                )}
+              </>
             )}
 
             {/* Move-ins / Move-outs */}
