@@ -1,5 +1,6 @@
 import type {
   AuthToken,
+  FacilityResponse,
   JournalEntriesReport,
   Lease,
   PaginatedResponse,
@@ -14,8 +15,7 @@ async function request<T>(
   token: string,
   options: RequestInit = {}
 ): Promise<T> {
-  const url = `${BASE_URL}${path}`;
-  const res = await fetch(url, {
+  const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -34,7 +34,7 @@ async function request<T>(
   return res.json() as Promise<T>;
 }
 
-// ── Auth ─────────────────────────────────────────────────────────────────────
+// ── Auth ──────────────────────────────────────────────────────────────────────
 
 export async function loginWithCredentials(
   clientId: string,
@@ -71,7 +71,19 @@ export async function refreshAccessToken(
   return res.json();
 }
 
-// ── Revenue ───────────────────────────────────────────────────────────────────
+// ── Facilities ────────────────────────────────────────────────────────────────
+
+export async function getFacilities(
+  token: string,
+  companyCode: string
+): Promise<PaginatedResponse<FacilityResponse>> {
+  return request<PaginatedResponse<FacilityResponse>>(
+    `/api/v2/companies/${companyCode}/facilities?Page=0&Size=100`,
+    token
+  );
+}
+
+// ── Revenue / Journal Entries ─────────────────────────────────────────────────
 
 export async function getJournalEntries(
   token: string,
@@ -124,7 +136,7 @@ export async function getReservations(
   size = 25
 ): Promise<PaginatedResponse<Reservation>> {
   const qs = new URLSearchParams({
-    "Statuses": "Active",
+    Statuses: "Active",
     Page: String(page),
     Size: String(size),
   });
@@ -134,7 +146,7 @@ export async function getReservations(
   );
 }
 
-// ── Tenant Notes ─────────────────────────────────────────────────────────────
+// ── Tenant Notes ──────────────────────────────────────────────────────────────
 
 export async function getTenantNotes(
   token: string,

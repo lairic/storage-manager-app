@@ -1,4 +1,36 @@
-// Auth
+// ── Stored config (localStorage) ─────────────────────────────────────────────
+
+export interface StoredFacility {
+  facilityCode: string;
+  facilityId: string;
+  name: string;
+  timeZoneId: string;
+  isActive: boolean;
+}
+
+export interface StoredCompany {
+  id: string;           // local UUID, stable client-side identifier
+  name: string;         // user-facing label
+  companyCode: string;  // used in API paths
+  facilities: StoredFacility[];
+  addedAt: number;
+}
+
+export type CardId =
+  | "revenue"
+  | "move-ins"
+  | "move-outs"
+  | "reservations"
+  | "communications";
+
+export interface CardPref {
+  id: CardId;
+  enabled: boolean;
+  order: number;
+}
+
+// ── Auth ──────────────────────────────────────────────────────────────────────
+
 export interface AuthToken {
   token: string;
   tokenType: string;
@@ -6,15 +38,16 @@ export interface AuthToken {
   refreshToken: string | null;
 }
 
-export interface SessionData {
+export interface CompanyToken {
   token: string;
   refreshToken: string | null;
   expiresAt: number;
-  companyCode: string;
-  facilityCode: string;
 }
 
-// Revenue / Journal Entries
+export type TokenMap = Record<string, CompanyToken>; // keyed by companyCode
+
+// ── API: Revenue / Journal Entries ────────────────────────────────────────────
+
 export interface JournalEntryResponse {
   accountType: string;
   accountName: string;
@@ -30,7 +63,8 @@ export interface JournalEntriesReport {
   journalEntries: JournalEntryResponse[];
 }
 
-// Leases (move-ins / move-outs)
+// ── API: Leases (move-ins / move-outs) ────────────────────────────────────────
+
 export type LeaseStatus = "Pending" | "Active" | "Discarded" | "Terminated";
 export type LeaseType = "MoveIn" | "Transfer" | "Migration";
 
@@ -64,16 +98,14 @@ export interface PaginatedResponse<T> {
   size: number;
 }
 
-// Reservations
+// ── API: Reservations ─────────────────────────────────────────────────────────
+
 export type ReservationStatus = "Active" | "Canceled" | "Converted";
 
 export interface Reservation {
   id: string;
   facilityId: string;
-  unit: {
-    unitNumber: string;
-    unitGroupName?: string;
-  };
+  unit: { unitNumber: string; unitGroupName?: string };
   reservedUntil: string;
   status: ReservationStatus;
   leadSourceId: string;
@@ -88,7 +120,8 @@ export interface Reservation {
   updatedAt: string;
 }
 
-// Tenant Notes (communications)
+// ── API: Tenant Notes ─────────────────────────────────────────────────────────
+
 export interface TenantNote {
   id: string;
   text: string;
@@ -98,12 +131,41 @@ export interface TenantNote {
   tenantName?: string;
 }
 
-// Dashboard aggregate
-export interface DashboardData {
-  date: string;
+// ── API: Facilities ───────────────────────────────────────────────────────────
+
+export interface FacilityResponse {
+  id: string;
+  code: string;
+  name: string;
+  isActive: boolean;
+  createdAt: string;
+  location: { lat: number; lng: number; timeZoneId: string };
+  tenantPortalUrl?: string;
+}
+
+// ── Dashboard aggregates ──────────────────────────────────────────────────────
+
+export interface FacilityDashboardData {
+  companyCode: string;
+  facilityCode: string;
+  facilityName: string;
   revenue: JournalEntriesReport;
   moveIns: PaginatedResponse<Lease>;
   moveOuts: PaginatedResponse<Lease>;
   reservations: PaginatedResponse<Reservation>;
-  recentNotes: TenantNote[];
+  error?: string;
+}
+
+export interface RollupSummary {
+  creditTotal: number;
+  debitTotal: number;
+  totalMoveIns: number;
+  totalMoveOuts: number;
+  totalReservations: number;
+}
+
+export interface RollupResponse {
+  date: string;
+  summary: RollupSummary;
+  facilities: FacilityDashboardData[];
 }
