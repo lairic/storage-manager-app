@@ -12,6 +12,7 @@ export interface StoredCompany {
   id: string;           // local UUID, stable client-side identifier
   name: string;         // user-facing label
   companyCode: string;  // used in API paths
+  clientId?: string;    // saved for reconnect pre-fill (not sensitive)
   facilities: StoredFacility[];
   addedAt: number;
 }
