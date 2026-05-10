@@ -66,28 +66,28 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-slate-900 safe-top safe-bottom">
+    <div className="min-h-dvh bg-slate-50 dark:bg-slate-900 safe-top safe-bottom">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-slate-900 border-b border-slate-700 px-4 py-3 flex items-center gap-3">
+      <header className="sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 px-4 py-3 flex items-center gap-3">
         <button
           onClick={() => router.back()}
-          className="p-2 -ml-2 rounded-xl text-slate-400 hover:text-white"
+          className="p-2 -ml-2 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="text-lg font-bold text-white">Settings</h1>
+        <h1 className="text-lg font-bold text-slate-900 dark:text-white">Settings</h1>
       </header>
 
       <div className="px-4 py-4 space-y-6 pb-8">
         {/* Companies */}
         <section>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <h2 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
               Companies & Facilities
             </h2>
             <button
               onClick={() => router.push("/setup?add=1")}
-              className="flex items-center gap-1 text-sm text-blue-400 font-medium"
+              className="flex items-center gap-1 text-sm text-blue-500 dark:text-blue-400 font-medium"
             >
               <Plus size={16} />
               Add
@@ -95,23 +95,23 @@ export default function SettingsPage() {
           </div>
 
           {companies.length === 0 ? (
-            <p className="text-slate-500 text-sm">No companies configured.</p>
+            <p className="text-slate-400 dark:text-slate-500 text-sm">No companies configured.</p>
           ) : (
             <div className="space-y-3">
               {companies.map((company) => (
                 <div
                   key={company.companyCode}
-                  className="rounded-2xl bg-slate-800 border border-slate-700 overflow-hidden"
+                  className="rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 overflow-hidden"
                 >
                   {/* Company header */}
-                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700">
+                  <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-slate-700">
                     <div>
-                      <p className="font-semibold text-white text-sm">{company.name}</p>
-                      <p className="text-xs text-slate-500">{company.companyCode}</p>
+                      <p className="font-semibold text-slate-900 dark:text-white text-sm">{company.name}</p>
+                      <p className="text-xs text-slate-400 dark:text-slate-500">{company.companyCode}</p>
                     </div>
                     <button
                       onClick={() => handleRemoveCompany(company.companyCode)}
-                      className="p-2 text-slate-500 hover:text-red-400 transition-colors"
+                      className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-500 dark:hover:text-red-400 transition-colors"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -127,22 +127,22 @@ export default function SettingsPage() {
                       <div key={facility.facilityCode}>
                         <button
                           onClick={() => setExpandedFacility(isExpanded ? null : key)}
-                          className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-700/50 transition-colors"
+                          className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors"
                         >
                           <div>
-                            <p className="text-sm text-slate-200">{facility.name}</p>
-                            <p className="text-xs text-slate-500">{facility.facilityCode}</p>
+                            <p className="text-sm text-slate-700 dark:text-slate-200">{facility.name}</p>
+                            <p className="text-xs text-slate-400 dark:text-slate-500">{facility.facilityCode}</p>
                           </div>
                           <ChevronRight
                             size={16}
-                            className={`text-slate-500 transition-transform ${isExpanded ? "rotate-90" : ""}`}
+                            className={`text-slate-400 dark:text-slate-500 transition-transform ${isExpanded ? "rotate-90" : ""}`}
                           />
                         </button>
 
                         {/* Card toggles */}
                         {isExpanded && (
-                          <div className="bg-slate-900/50 px-4 py-3 border-t border-slate-700">
-                            <p className="text-xs text-slate-400 mb-2 font-medium uppercase tracking-wider">
+                          <div className="bg-slate-50 dark:bg-slate-900/50 px-4 py-3 border-t border-slate-200 dark:border-slate-700">
+                            <p className="text-xs text-slate-500 dark:text-slate-400 mb-2 font-medium uppercase tracking-wider">
                               Dashboard Cards
                             </p>
                             <div className="space-y-2">
@@ -154,7 +154,7 @@ export default function SettingsPage() {
                                     key={pref.id}
                                     className="flex items-center justify-between"
                                   >
-                                    <span className="text-sm text-slate-300">
+                                    <span className="text-sm text-slate-700 dark:text-slate-300">
                                       {CARD_LABELS[pref.id]}
                                     </span>
                                     <button
@@ -166,7 +166,7 @@ export default function SettingsPage() {
                                         )
                                       }
                                       className={`transition-colors ${
-                                        pref.enabled ? "text-blue-400" : "text-slate-600"
+                                        pref.enabled ? "text-blue-500 dark:text-blue-400" : "text-slate-300 dark:text-slate-600"
                                       }`}
                                     >
                                       {pref.enabled ? (
@@ -193,7 +193,7 @@ export default function SettingsPage() {
         <section className="pt-2">
           <button
             onClick={handleLogout}
-            className="w-full py-3.5 rounded-xl border border-red-800 text-red-400 font-medium text-sm hover:bg-red-900/20 transition-colors"
+            className="w-full py-3.5 rounded-xl border border-red-300 dark:border-red-800 text-red-500 dark:text-red-400 font-medium text-sm hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
           >
             Sign Out & Remove All Data
           </button>

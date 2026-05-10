@@ -24,7 +24,9 @@ async function fetchOneFacility(
   companyCode: string,
   facilityCode: string,
   facilityName: string,
-  date: string
+  date: string,
+  revenueFrom: string,
+  revenueTo: string
 ): Promise<FacilityDashboardData> {
   const mtdFrom = firstDayOfMonth(date);
   const prevMonthFrom = firstDayOfLastMonth(date);
@@ -32,7 +34,7 @@ async function fetchOneFacility(
   try {
     const [revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations, occupancy] =
       await Promise.all([
-        getJournalEntries(token, companyCode, facilityCode, date),
+        getJournalEntries(token, companyCode, facilityCode, revenueFrom, revenueTo),
         getJournalEntries(token, companyCode, facilityCode, mtdFrom, date),
         getJournalEntries(token, companyCode, facilityCode, prevMonthFrom, prevMonthTo),
         getLeases(token, companyCode, facilityCode, {
@@ -73,10 +75,14 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({})) as {
     date?: string;
     targets?: RollupTarget[];
+    revenueFrom?: string;
+    revenueTo?: string;
   };
 
   const date = body.date ?? todayISO();
   const targets: RollupTarget[] = body.targets ?? [];
+  const revenueFrom = body.revenueFrom ?? date;
+  const revenueTo = body.revenueTo ?? date;
 
   if (targets.length === 0) {
     return NextResponse.json({ error: "No targets provided" }, { status: 400 });
@@ -84,7 +90,6 @@ export async function POST(req: NextRequest) {
 
   const tokens = parseTokens(req.headers.get("cookie"));
 
-  // Check all required tokens are present and not expired
   for (const { companyCode } of targets) {
     const ct = tokens[companyCode];
     if (!ct) {
@@ -101,7 +106,6 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // Fetch all facilities in parallel
   const facilities = await Promise.all(
     targets.map(({ companyCode, facilityCode, facilityName }) =>
       fetchOneFacility(
@@ -109,12 +113,13 @@ export async function POST(req: NextRequest) {
         companyCode,
         facilityCode,
         facilityName,
-        date
+        date,
+        revenueFrom,
+        revenueTo
       )
     )
   );
 
-  // Aggregate summary
   const summary: RollupSummary = facilities.reduce(
     (acc, f) => ({
       creditTotal: acc.creditTotal + (f.revenue?.creditTotal ?? 0),

@@ -1,13 +1,15 @@
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
+  --donut-track: #e2e8f0;
+}
+
+.dark {
+  --donut-track: #1e293b;
 }
 
 body {
-  background-color: var(--background);
-  color: var(--foreground);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
 }

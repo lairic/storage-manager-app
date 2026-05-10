@@ -125,12 +125,12 @@ function SetupContent() {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <main className="min-h-dvh flex flex-col bg-slate-900 px-5 py-8 safe-top safe-bottom">
+    <main className="min-h-dvh flex flex-col bg-slate-50 dark:bg-slate-900 px-5 py-8 safe-top safe-bottom">
       {/* Back button when adding from settings */}
       {isAdding && step === "credentials" && (
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-1 text-slate-400 mb-6 self-start"
+          className="flex items-center gap-1 text-slate-500 dark:text-slate-400 mb-6 self-start"
         >
           <ArrowLeft size={18} />
           <span className="text-sm">Back</span>
@@ -143,11 +143,11 @@ function SetupContent() {
           <div className="p-4 rounded-2xl bg-blue-600 mb-4">
             <Warehouse size={28} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
             {isAdding ? "Add Company" : "Welcome"}
           </h1>
           {!isAdding && (
-            <p className="text-slate-400 text-sm mt-1 text-center">
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1 text-center">
               Connect your first storage company to get started
             </p>
           )}
@@ -158,7 +158,7 @@ function SetupContent() {
       {step !== "done" && (
         <div className="flex items-center gap-2 justify-center mb-8">
           <div className={`h-2 rounded-full transition-all ${step === "credentials" ? "w-8 bg-blue-500" : "w-2 bg-blue-700"}`} />
-          <div className={`h-2 rounded-full transition-all ${step === "facilities" ? "w-8 bg-blue-500" : "w-2 bg-slate-600"}`} />
+          <div className={`h-2 rounded-full transition-all ${step === "facilities" ? "w-8 bg-blue-500" : "w-2 bg-slate-300 dark:bg-slate-600"}`} />
         </div>
       )}
 
@@ -166,20 +166,20 @@ function SetupContent() {
       {step === "credentials" && (
         <form onSubmit={handleConnect} className="space-y-4 w-full max-w-sm mx-auto">
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              Company Name <span className="text-slate-500">(your label)</span>
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">
+              Company Name <span className="text-slate-400 dark:text-slate-500">(your label)</span>
             </label>
             <input
               type="text"
               value={form.companyName}
               onChange={(e) => updateForm("companyName", e.target.value)}
               placeholder="What is your company name?"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">
               Company Code
             </label>
             <input
@@ -190,12 +190,12 @@ function SetupContent() {
               value={form.companyCode}
               onChange={(e) => updateForm("companyCode", e.target.value)}
               placeholder="e.g. ABC"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">
               Client ID
             </label>
             <input
@@ -206,12 +206,12 @@ function SetupContent() {
               value={form.clientId}
               onChange={(e) => updateForm("clientId", e.target.value)}
               placeholder="Your API client ID"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+            <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1.5">
               Client Secret
             </label>
             <input
@@ -220,12 +220,12 @@ function SetupContent() {
               value={form.clientSecret}
               onChange={(e) => updateForm("clientSecret", e.target.value)}
               placeholder="Your API client secret"
-              className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-600 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           {error && (
-            <p className="text-sm text-red-400 bg-red-900/20 rounded-xl px-4 py-3 border border-red-800">
+            <p className="text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-xl px-4 py-3 border border-red-200 dark:border-red-800">
               {error}
             </p>
           )}
@@ -243,9 +243,9 @@ function SetupContent() {
       {/* ── Step 2: Confirm facilities ──────────────────────────────────── */}
       {step === "facilities" && (
         <div className="w-full max-w-sm mx-auto">
-          <p className="text-slate-300 text-sm mb-4 text-center">
+          <p className="text-slate-600 dark:text-slate-300 text-sm mb-4 text-center">
             Found {facilityOptions.length} facilit{facilityOptions.length === 1 ? "y" : "ies"} for{" "}
-            <span className="text-white font-medium">{form.companyName || form.companyCode}</span>.
+            <span className="text-slate-900 dark:text-white font-medium">{form.companyName || form.companyCode}</span>.
             {facilityOptions.length > 1 && " Choose which to include."}
           </p>
 
@@ -256,8 +256,8 @@ function SetupContent() {
                 onClick={() => toggleFacility(opt.facilityCode)}
                 className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl border transition-colors text-left ${
                   opt.selected
-                    ? "bg-blue-900/30 border-blue-600 text-white"
-                    : "bg-slate-800 border-slate-700 text-slate-400"
+                    ? "bg-blue-50 dark:bg-blue-900/30 border-blue-500 dark:border-blue-600 text-slate-900 dark:text-white"
+                    : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400"
                 }`}
               >
                 <div>
@@ -274,7 +274,7 @@ function SetupContent() {
           </div>
 
           {error && (
-            <p className="text-sm text-red-400 bg-red-900/20 rounded-xl px-4 py-3 border border-red-800 mb-4">
+            <p className="text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-xl px-4 py-3 border border-red-200 dark:border-red-800 mb-4">
               {error}
             </p>
           )}
@@ -282,7 +282,7 @@ function SetupContent() {
           <div className="flex gap-3">
             <button
               onClick={() => { setStep("credentials"); setError(""); }}
-              className="flex-1 py-3 rounded-xl border border-slate-600 text-slate-300 font-medium"
+              className="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-medium"
             >
               Back
             </button>

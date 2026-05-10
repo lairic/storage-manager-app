@@ -98,6 +98,9 @@ export interface Lease {
   notes?: string;
   createdAt?: string;
   updatedAt?: string;
+  processedBy?: string;
+  leadSource?: string;
+  leadSourceId?: string;
 }
 
 export interface PaginatedResponse<T> {

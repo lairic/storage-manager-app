@@ -13,6 +13,8 @@ export async function GET(req: NextRequest) {
   const companyCode = searchParams.get("companyCode");
   const facilityCode = searchParams.get("facilityCode");
   const date = searchParams.get("date") ?? todayISO();
+  const revenueFrom = searchParams.get("revenueFrom") ?? date;
+  const revenueTo = searchParams.get("revenueTo") ?? date;
 
   if (!companyCode || !facilityCode) {
     return NextResponse.json(
@@ -42,7 +44,7 @@ export async function GET(req: NextRequest) {
   try {
     const [revenue, revenueMTD, revenueMTDPrevMonth, moveIns, moveOuts, reservations, occupancy] =
       await Promise.all([
-        getJournalEntries(ct.token, companyCode, facilityCode, date),
+        getJournalEntries(ct.token, companyCode, facilityCode, revenueFrom, revenueTo),
         getJournalEntries(ct.token, companyCode, facilityCode, mtdFrom, date),
         getJournalEntries(ct.token, companyCode, facilityCode, prevMonthFrom, prevMonthTo),
         getLeases(ct.token, companyCode, facilityCode, {

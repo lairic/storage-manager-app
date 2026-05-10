@@ -13,13 +13,17 @@ function DonutChart({ occupied, total }: { occupied: number; total: number }) {
     <div className="relative w-24 h-24 flex-shrink-0">
       <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
         <circle
-          cx="50" cy="50" r={r}
+          cx="50"
+          cy="50"
+          r={r}
           fill="none"
-          stroke="#1e293b"
+          stroke="var(--donut-track)"
           strokeWidth="14"
         />
         <circle
-          cx="50" cy="50" r={r}
+          cx="50"
+          cy="50"
+          r={r}
           fill="none"
           stroke="#22c55e"
           strokeWidth="14"
@@ -29,7 +33,7 @@ function DonutChart({ occupied, total }: { occupied: number; total: number }) {
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-lg font-bold text-white">{pct}%</span>
+        <span className="text-lg font-bold text-slate-900 dark:text-white">{pct}%</span>
       </div>
     </div>
   );
@@ -43,7 +47,7 @@ export function OccupancyCard({ data }: { data: OccupancyData | undefined }) {
 
   return (
     <Card>
-      <p className="text-xs font-medium text-slate-400 uppercase tracking-wide mb-3">
+      <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-3">
         Occupancy
       </p>
       <div className="flex items-center gap-4">
@@ -53,29 +57,29 @@ export function OccupancyCard({ data }: { data: OccupancyData | undefined }) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
               <span className="w-2.5 h-2.5 rounded-full bg-green-500 flex-shrink-0" />
-              <span className="text-sm text-slate-300">Occupied</span>
+              <span className="text-sm text-slate-600 dark:text-slate-300">Occupied</span>
             </div>
-            <span className="text-sm font-semibold text-white tabular-nums">
+            <span className="text-sm font-semibold text-slate-900 dark:text-white tabular-nums">
               {occupied.toLocaleString()}
             </span>
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-full bg-slate-600 flex-shrink-0" />
-              <span className="text-sm text-slate-300">Vacant</span>
+              <span className="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-slate-600 flex-shrink-0" />
+              <span className="text-sm text-slate-600 dark:text-slate-300">Vacant</span>
             </div>
-            <span className="text-sm font-semibold text-white tabular-nums">
+            <span className="text-sm font-semibold text-slate-900 dark:text-white tabular-nums">
               {vacant.toLocaleString()}
             </span>
           </div>
-          <div className="pt-1 border-t border-slate-700">
+          <div className="pt-1 border-t border-slate-200 dark:border-slate-700">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">Total units</span>
-              <span className="text-xs text-slate-400 tabular-nums">{total.toLocaleString()}</span>
+              <span className="text-xs text-slate-400 dark:text-slate-500">Total units</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">{total.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">Vacancy rate</span>
-              <span className="text-xs text-slate-400 tabular-nums">{vacancyPct}%</span>
+              <span className="text-xs text-slate-400 dark:text-slate-500">Vacancy rate</span>
+              <span className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">{vacancyPct}%</span>
             </div>
           </div>
         </div>

@@ -49,12 +49,12 @@ export function RollupCard({
       onClick={onClick}
       disabled={!isMultiFacility}
       className={cn(
-        "w-full rounded-2xl bg-slate-800 border border-slate-700 p-4 text-left transition-colors",
-        isMultiFacility && "active:bg-slate-700"
+        "w-full rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-4 text-left transition-colors",
+        isMultiFacility && "active:bg-slate-100 dark:active:bg-slate-700"
       )}
     >
       <div className="flex items-start justify-between mb-1">
-        <p className="text-xs font-medium text-slate-400 uppercase tracking-wide">
+        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">
           {label}
         </p>
         <div className={cn("p-2 rounded-xl", bgClass)}>{icon}</div>
@@ -65,13 +65,13 @@ export function RollupCard({
       </p>
 
       {isMultiFacility && (
-        <p className="text-xs text-slate-500 mt-2">Tap for breakdown ↓</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">Tap for breakdown ↓</p>
       )}
     </button>
   );
 }
 
-// ── Drill-down breakdown (inline, shown when a card is expanded) ──────────────
+// ── Drill-down breakdown ──────────────────────────────────────────────────────
 
 interface BreakdownProps {
   metric: Metric;
@@ -87,7 +87,7 @@ export function FacilityBreakdown({
   colorClass,
 }: BreakdownProps) {
   return (
-    <div className="rounded-2xl bg-slate-800/60 border border-slate-700 overflow-hidden">
+    <div className="rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 overflow-hidden">
       {facilities.map((f, i) => {
         const value = getFacilityValue(f, metric);
         return (
@@ -95,15 +95,15 @@ export function FacilityBreakdown({
             key={`${f.companyCode}/${f.facilityCode}`}
             className={cn(
               "flex items-center justify-between px-4 py-3",
-              i < facilities.length - 1 && "border-b border-slate-700"
+              i < facilities.length - 1 && "border-b border-slate-200 dark:border-slate-700"
             )}
           >
             <div>
-              <p className="text-sm font-medium text-slate-200">
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
                 {f.facilityName}
               </p>
               {f.error && (
-                <p className="text-xs text-red-400">{f.error}</p>
+                <p className="text-xs text-red-500">{f.error}</p>
               )}
             </div>
             <span className={cn("text-sm font-bold", colorClass)}>
